@@ -1,0 +1,63 @@
+sudo: required # needed for trusty beta
+dist: trusty   # needed for HarfBuzz
+
+language: bash
+
+compiler:
+  #- clang
+  - gcc   # Not used
+
+before_script:
+  - wget https://github.com/jgm/pandoc/releases/download/2.1.1/pandoc-2.1.1-1-amd64.deb
+  - cd appdir
+  - ar -x ../pandoc*.deb
+  - cd ..
+  - mkdir -p ./appdir/usr/share/applications
+  - mkdir -p ./appdir/usr/share/icons/hicolor/{128x128,512x512}/apps
+  - mkdir -p ./appdir/usr/share/metainfo
+
+script:
+  - wget -c "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
+  - chmod a+x linuxdeployqt*.AppImage
+  - unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
+
+    # Fake icon
+  - touch appdir/usr/share/icons/hicolor/{128x128,512x512}/apps/pandoc.png
+
+    # Create minimal .desktop file
+  - cat > usr/share/applications/pandoc.desktop <<\EOF
+  - [Desktop Entry]
+  - Name=Pandoc
+  - Exec=pandoc
+  - Type=Application
+  - Icon=pandoc
+  - Categories=Utility;
+  - EOF
+  - cp usr/share/applications/pandoc.desktop .
+
+    # Make 1st AppImage with linuxdeployqt
+  - ./linuxdeployqt*.AppImage ./appdir/usr/bin/pandoc -bundle-non-qt-libs -no-strip -appimage -verbose=2
+  - find ./appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
+  - cp pandoc*.AppImage pandoc-linuxdeployqt-x86_64.AppImage
+  - ./linuxdeployqt*.AppImage --appimage-extract
+  - chmod a+x appimagetool-*.AppImage
+  - ls -l *.AppImage
+
+    # Make 2nd AppImage with appimagetool
+  - PATH=./squashfs-root/usr/bin:$PATH ./squashfs-root/usr/bin/appimagetool -v -n -u 'gh-releases-zsync|KurtPfeifle|ImageMagick|continuous|ImageMagick-*x86_64.AppImage.zsync' ./appdir  pandoc-appimagetool-uuu-x86_64.AppImage
+
+    # Make 3rd AppImage with appimagetool
+  - PATH=./squashfs-root/usr/bin:$PATH ./squashfs-root/usr/bin/appimagetool -v -n -g  ./appdir pandoc-appimagetool-ggg-x86_64.AppImage
+
+    # Test AppImages...
+  - ls -l pandoc*.AppImage*
+  - for i in pandoc*.AppImage ; do for j in version updateinfo offset ; do echo $i ; ./$i --appimage-$j ; echo "" ; done ; done
+
+    # Upload
+    # Use this for GitHub uploads: - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
+  - curl --upload-file ./pandoc-appimagetool-uuu-x86_64.AppImage  https://transfer.sh/pandoc-appimagetool-uuu-x86_64.AppImage
+  - curl --upload-file ./pandoc-appimagetool-ggg-x86_64.AppImage  https://transfer.sh/pandoc-appimagetool-ggg-x86_64.AppImage
+  - curl --upload-file ./pandoc-linuxdeployqt-x86_64.AppImage     https://transfer.sh/pandoc-linuxdeployqt-x86_64.AppImage
+
+after_success:
+    # Nothing for now...
