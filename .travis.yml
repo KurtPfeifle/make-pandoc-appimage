@@ -12,14 +12,14 @@ compiler:
 before_script:
   - wget https://github.com/jgm/pandoc/releases/download/2.1.1/pandoc-2.1.1-1-amd64.deb
   - mkdir appdir
-  - cd appdir
-  - ar -x ../pandoc*.deb
-  - cd ..
   - mkdir -p ./appdir/usr/share/applications
   - mkdir -p ./appdir/usr/share/icons/hicolor/{128x128,512x512}/apps
   - mkdir -p ./appdir/usr/share/metainfo
 
 script:
+  - cd appdir
+  - ar -x ../pandoc*.deb
+  - cd ..
   - wget -c "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
   - chmod a+x linuxdeployqt*.AppImage
   - unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
