@@ -38,6 +38,8 @@ script:
     Categories=Utility;
     _EOF_
   - cp ./appdir/usr/share/applications/pandoc.desktop .
+  - find . -type d
+  - find . -type f
 
     # Make 1st AppImage with linuxdeployqt
   - ./linuxdeployqt*.AppImage ./appdir/usr/bin/pandoc -bundle-non-qt-libs -no-strip -appimage -verbose=2
