@@ -29,7 +29,7 @@ script:
 
     # Create minimal .desktop file
   - |
-    cat > usr/share/applications/pandoc.desktop <<_EOF_
+    cat > ./appdir/usr/share/applications/pandoc.desktop <<_EOF_
     [Desktop Entry]
     Name=Pandoc
     Exec=pandoc
@@ -37,7 +37,7 @@ script:
     Icon=pandoc
     Categories=Utility;
     _EOF_
-  - cp usr/share/applications/pandoc.desktop .
+  - cp ./appdir/usr/share/applications/pandoc.desktop .
 
     # Make 1st AppImage with linuxdeployqt
   - ./linuxdeployqt*.AppImage ./appdir/usr/bin/pandoc -bundle-non-qt-libs -no-strip -appimage -verbose=2
