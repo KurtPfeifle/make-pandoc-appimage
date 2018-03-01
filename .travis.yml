@@ -18,7 +18,8 @@ before_script:
 
 script:
   - cd appdir
-  - ar -x ../pandoc*.deb
+  - ar xv ../pandoc*.deb
+  - tar tvJf data.tar.xz
   - cd ..
   - wget -c "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
   - chmod a+x linuxdeployqt*.AppImage
