@@ -28,14 +28,15 @@ script:
   - touch appdir/usr/share/icons/hicolor/{128x128,512x512}/apps/pandoc.png
 
     # Create minimal .desktop file
-  - cat > usr/share/applications/pandoc.desktop <<_EOF_
-  - [Desktop Entry]
-  - Name=Pandoc
-  - Exec=pandoc
-  - Type=Application
-  - Icon=pandoc
-  - Categories=Utility;
-  - _EOF_
+  - |
+    cat > usr/share/applications/pandoc.desktop <<_EOF_
+    [Desktop Entry]
+    Name=Pandoc
+    Exec=pandoc
+    Type=Application
+    Icon=pandoc
+    Categories=Utility;
+    _EOF_
   - cp usr/share/applications/pandoc.desktop .
 
     # Make 1st AppImage with linuxdeployqt
