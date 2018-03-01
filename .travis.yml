@@ -44,17 +44,18 @@ script:
   - find ./appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
   - cp pandoc*.AppImage pandoc-linuxdeployqt-x86_64.AppImage
   - ./linuxdeployqt*.AppImage --appimage-extract
-  - chmod a+x appimagetool-*.AppImage
+  - chmod a+x ./squashfs-root/usr/bin/appimagetool-*.AppImage
   - ls -l *.AppImage
 
     # Make 2nd AppImage with appimagetool
-  - PATH=./squashfs-root/usr/bin:$PATH ./squashfs-root/usr/bin/appimagetool -v -n -u 'gh-releases-zsync|KurtPfeifle|ImageMagick|continuous|ImageMagick-*x86_64.AppImage.zsync' ./appdir  pandoc-appimagetool-uuu-x86_64.AppImage
+  - PATH=./squashfs-root/usr/bin:$PATH ./squashfs-root/usr/bin/appimagetool -v -n -u 'gh-releases-zsync|KurtPfeifle|make-pandoc-appimage|continuous|pandoc-*x86_64.AppImage.zsync' ./appdir  pandoc-appimagetool-uuu-x86_64.AppImage
 
     # Make 3rd AppImage with appimagetool
   - PATH=./squashfs-root/usr/bin:$PATH ./squashfs-root/usr/bin/appimagetool -v -n -g  ./appdir pandoc-appimagetool-ggg-x86_64.AppImage
 
     # Test AppImages...
-  - ls -l pandoc*.AppImage*
+  - ls -l pandoc*.AppImage
+  - ls -l pandoc*.AppImage.zsync
   - for i in pandoc*.AppImage ; do for j in version updateinfo offset ; do echo $i ; ./$i --appimage-$j ; echo "" ; done ; done
 
     # Upload
